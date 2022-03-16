@@ -18,6 +18,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: cd functions && npm install && npm run build
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x' # SDK Version to use.
+      - name: Build
+        run: dotnet run --configuration Release
+        env:
+          AzureMapsSubscriptionKey: ${{ secrets.AzureMapsSubscriptionKey }}     
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
